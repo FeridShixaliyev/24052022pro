@@ -1,0 +1,31 @@
+﻿@model Slider
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container mt-5">
+    <h3>Create Slider</h3>
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label asp-for="@Model.Title" class="form-label">Title</label>
+            <input asp-for="@Model.Title" class="form-control">
+            <span class="mt-2 text text-danger" asp-validation-for="@Model.Title"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="@Model.Description" class="form-label">Description</label>
+            <input asp-for="@Model.Description" class="form-control">
+            <span class="mt-2 text text-danger" asp-validation-for="@Model.Description"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="@Model.DiscountPercent" class="form-label">DiscuontPercent</label>
+            <input asp-for="@Model.DiscountPercent" class="form-control">
+            <span class="mt-2 text text-danger" asp-validation-for="@Model.DiscountPercent"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="@Model.ImageFile" class="form-label">Download Photos</label>
+            <input asp-for="@Model.ImageFile" accept="image*" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-controller="slider" asp-action="index"/>
+    </form>
+</div>

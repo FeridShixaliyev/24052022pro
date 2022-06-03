@@ -1,0 +1,52 @@
+﻿@model List<Product>
+@{
+    ViewData["Title"] = "Product";
+}
+
+<div class="container mt-5">
+
+    <div class="create">
+        <a class="btn btn-success mb-1" asp-controller="product" asp-action="create">Create</a>
+    </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">IsDelete</th>
+            <th scope="col">Edit/Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Product item in Model)
+         {
+            <tr>
+                <th scope="row">@item.Id</th>
+                <td>
+                    @foreach (var photo in item.Images.Where(i=>i.IsMain))
+                    {
+                    <img style="width: 50px;height:50px; border-radius: 20%" src="~/assets/images/product/@photo.Image"/>
+                    }
+                </td>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Rating</td>
+                <td>@item.Description</td>
+                <td>@item.Category.Name</td>
+                <td>@(item.IsDelete == false ? Html.Raw("<span class='badge rounded - pill bg - outline - danger' style='color: red; font-size: 10px; border: 1px solid red; cursor:pointer'>Gorsenmir</span>"):Html.Raw("<span class='badge rounded - pill bg - outline - success' style='color: red; font-size: 10px; border: 1px solid red; cursor:pointer'>Gorsenir</span>"))</td>
+                <td>
+                    <a class="btn btn-outline-primary" asp-controller="product" asp-action="edit"asp-route-id="@item.Id">edit</a>
+                    <a class="btn btn-outline-danger" asp-controller="product" asp-action="delete" asp-route-id="@item.Id">delete</a>
+                </td>
+            </tr>
+         }
+
+    </tbody>
+</table>
+
+</div>

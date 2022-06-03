@@ -46,6 +46,9 @@ namespace ProniaSyte.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -53,6 +56,9 @@ namespace ProniaSyte.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockCount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
