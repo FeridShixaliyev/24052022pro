@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProniaSyte.DAL;
 using ProniaSyte.Extentions;
 using ProniaSyte.Models;
-using ProniaSyte.ViewModels;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,7 +99,7 @@ namespace ProniaSyte.Areas.Manage.Controllers
         public IActionResult Delete(int? id)
         {
             if (id == null) return NotFound();
-            Product product = _sql.Products.FirstOrDefault(p=>p.Id==id);
+            Product product = _sql.Products.Find(id);
             if (product == null) return BadRequest();
             foreach (var item in product.Images)
             {

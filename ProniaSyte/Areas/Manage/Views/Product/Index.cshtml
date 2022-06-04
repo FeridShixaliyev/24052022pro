@@ -38,7 +38,7 @@
                 <td>@item.Rating</td>
                 <td>@item.Description</td>
                 <td>@item.Category.Name</td>
-                <td>@(item.IsDelete == false ? Html.Raw("<span class='badge rounded - pill bg - outline - danger' style='color: red; font-size: 10px; border: 1px solid red; cursor:pointer'>Gorsenmir</span>"):Html.Raw("<span class='badge rounded - pill bg - outline - success' style='color: red; font-size: 10px; border: 1px solid red; cursor:pointer'>Gorsenir</span>"))</td>
+                <td>@(item.IsDelete == false ? Html.Raw("<span class='badge rounded-pill bg-outline-danger' style='color: red; font-size: 10px; border: 1px solid red; cursor:pointer'>Gorsenmir</span>"):Html.Raw("<span class='badge rounded-pill bg-outline-success' style='color: green; font-size: 10px; border: 1px solid green; cursor:pointer'>Gorsenir</span>"))</td>
                 <td>
                     <a class="btn btn-outline-primary" asp-controller="product" asp-action="edit"asp-route-id="@item.Id">edit</a>
                     <a class="btn btn-outline-danger" asp-controller="product" asp-action="delete" asp-route-id="@item.Id">delete</a>
