@@ -47,7 +47,7 @@ namespace ProniaSyte.Areas.Manage.Controllers
                 {
                     ModelState.AddModelError("ImageFile", "Sekil 5 mb-dan boyuk ola bilmez!");
                 }
-                slider.Image = slider.ImageFile.SavaImage(_env.WebRootPath, "assets/images/slider/inner-img");
+                slider.Image = slider.ImageFile.SaveImage(_env.WebRootPath, "assets/images/slider/inner-img");
             }
             else
             {
@@ -85,7 +85,7 @@ namespace ProniaSyte.Areas.Manage.Controllers
                 } else
                 {
                     Helper.DeleteImg(_env.WebRootPath, "assets/images/slider/inner-img", existSlider.Image);
-                    existSlider.Image = slider.ImageFile.SavaImage(_env.WebRootPath, "assets/images/slider/inner-img");
+                    existSlider.Image = slider.ImageFile.SaveImage(_env.WebRootPath, "assets/images/slider/inner-img");
                     existSlider.Title = slider.Title;
                     existSlider.DiscountPercent = slider.DiscountPercent;
                     existSlider.Description = slider.Description;

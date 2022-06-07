@@ -14,7 +14,7 @@ namespace ProniaSyte.Extentions
         {
             return file.Length / 1024 / 1024 <= mb;
         }
-        public static string SavaImage(this IFormFile file, string root, string folder)
+        public static string SaveImage(this IFormFile file, string root, string folder)
         {
             string rootPath = Path.Combine(root, folder);
             string fileName = Guid.NewGuid().ToString() + file.FileName;

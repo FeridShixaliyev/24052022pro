@@ -1,6 +1,6 @@
 ﻿@model Product
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
 <div class="container mt-5">
@@ -31,18 +31,55 @@
             <input asp-for="@Model.Rating" class="form-control">
             <span class="mt-2 text text-danger" asp-validation-for="@Model.Rating"></span>
         </div>
+        @*<select class="form-select form-select-lg mb-3 form-control" asp-for="IsDelete">
+                <option disabled selected>Status</option>
+            </select>*@
         <select class="form-select form-select-lg mb-3 form-control" asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories,nameof(Category.Id),nameof(Category.Name)))">
             <option disabled selected>CATEGORY</option>
         </select>
-        @*<div class="mb-3">
-            <label asp-for="@Model.ImageFile" class="form-label">Poster Photos</label>
-            <input asp-for="@Model.ImageFile" accept="image/*" class="form-control">
+        <div class="mb-3">
+            <label asp-for="@Model.MainImage" class="form-label">Main Photos</label>
+            <input asp-for="@Model.MainImage" accept="image/*" class="form-control">
+            <span class="mt-2 text text-danger" asp-validation-for="@Model.MainImage"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="@Model.ImageFile" class="form-label">Other Photos</label>
-            <input asp-for="@Model.ImageFile" accept="image/*" class="form-control">
-        </div>*@
+            <label>Main Image :   </label>
+            <div class="delete-image">
+                <img style="width: 140px; border-radius: 7px; cursor: pointer" src="~/assets/images/product/@Model.Images.FirstOrDefault(p=>p.IsMain==true).Image" alt="Alternate text" />
+                <input type="hidden" asp-for="@Model.ImageIds" value="@Model.Images.FirstOrDefault(p=>p.IsMain==true).Id" />
+            </div>
+        </div>
+        <hr />
+        <div class="mb-3">
+            <label asp-for="@Model.ImageFiles" class="form-label">ImageFiles</label>
+            <input asp-for="@Model.ImageFiles" accept="image/*" class="form-control">
+            <span class="mt-2 text text-danger" asp-validation-for="@Model.ImageFiles"></span>
+        </div>
+        <div class="mb-3">
+            <label>Other Images :   </label>
+            <div class="other">
+                @foreach (var item in Model.Images.Where(i => i.IsMain != true))
+                {
+                    <div class="delete-image">
+                        <img style="width:140px;height:140px;border-radius:7px; margin-right:7px;cursor:pointer" src="~/assets/images/product/@item.Image" />
+                        <input type="hidden" asp-for="@Model.ImageIds" value="@item.Id" />
+                    </div>
+                }
+            </div>
+        </div>
+        <hr />
+        @*<div class="form-check form-switch m-3">
+                <input class="form-check-input" type="checkbox" asp-for="@Model.IsDelete" checked>
+                <label class="form-check-label" asp-for="@Model.IsDelete">Gorsenmir/Gorsenir</label>
+            </div>*@
         <button type="submit" class="btn btn-primary">Edit</button>
         <a asp-controller="slider" asp-action="index" />
     </form>
 </div>
+@*@section scripts{
+    <script>
+        $(".delete-image").click(function () {
+            $(this).remove();
+        });
+    </script>
+}*@

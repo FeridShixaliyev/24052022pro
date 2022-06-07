@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaSyte.DAL;
@@ -37,38 +38,54 @@ namespace ProniaSyte.Areas.Manage.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
-            if (!ModelState.IsValid) {
-                ViewBag.Categories = _sql.Categories.ToList();
-                return View();
-            };
+            ViewBag.Categories =await _sql.Categories.ToListAsync();
+            if (!ModelState.IsValid) return View();
             if (_sql.Products.Any(p => p.Name == product.Name))
             {
-                ViewBag.Categories = _sql.Categories.ToList();
-                ModelState.AddModelError("Name","Bu adda mehsul var!");
+                ModelState.AddModelError("Name", "Bu adda product var!");
                 return View();
             }
-            if (product.ImageFile != null)
+            if (product.ImageFiles != null)
             {
-                if (!product.ImageFile.IsImage())
+                if (CheckImage(product.ImageFiles) != "")
                 {
-                    ModelState.AddModelError("Poster","Sekil duzgun formatda deyil!");
+                    ModelState.AddModelError("ImageFiles", CheckImage(product.ImageFiles));
                     return View();
                 }
-                if (!product.ImageFile.IsSizeOk(10))
+                product.Images = new List<ProductImage>();
+                foreach (var item in product.ImageFiles)
                 {
-                    ModelState.AddModelError("Poster", "Sekil duzgun formatda deyil!");
+                    ProductImage productImage = new ProductImage
+                    {
+                        Image= item.SaveImage(_env.WebRootPath, "assets/images/product"),
+                        IsMain=false,
+                        Product=product
+                    };
+                    product.Images.Add(productImage);
+                }
+                if (product.MainImage.Length / 1024/1024 >= 5)
+                {
+                    ModelState.AddModelError("MainImage", "Sekil max 5 mb ola biler!");
                     return View();
                 }
-                //foreach (var item in product.ImageFiles)
-                //{
-                //    ProductImage productImage = new ProductImage
-                //    {
-                //        Image = await item.SavaImage(_env.WebRootPath, "assets/images/product", product.Images),
-                //        IsMain = true
-                //    };
-                   
-                //}
+                if (!product.MainImage.ContentType.Contains("image/"))
+                {
+                    ModelState.AddModelError("MainImage", "Sekil formati duzgun deyil!");
+                    return View();
+                }
+                ProductImage mainImage = new ProductImage
+                {
+                    Image = product.MainImage.SaveImage(_env.WebRootPath, "assets/images/product"),
+                    IsMain = true,
+                    Product = product
+                };
+                product.Images.Add(mainImage);
             }
+            else
+            {
+                return NotFound();
+            }
+            if (product.IsDelete == false) product.IsDelete = true;
             await _sql.Products.AddAsync(product);
             await _sql.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -76,30 +93,61 @@ namespace ProniaSyte.Areas.Manage.Controllers
         public IActionResult Edit(int? id)
         {
             ViewBag.Categories = _sql.Categories.ToList();
-            return View();
+            Product product = _sql.Products.Include(p => p.Category).Include(p => p.Images).FirstOrDefault(p => p.Id == id);
+            return View(product);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Product product)
+        public async Task<IActionResult> Edit(int? id,Product product)
         {
             if (!ModelState.IsValid) return View();
-            Product existProduct = _sql.Products.Find(product.Id);
+            Product existProduct = await _sql.Products.FindAsync(id);
             if (existProduct == null) return NotFound();
+            List<ProductImage> productImages = await _sql.ProductImages.Where(pi => pi.ProductId == id).ToListAsync();
+            List<int> dltImg = new List<int>();
+            foreach (var item in productImages)
+            {
+                
+            }
+            if (existProduct.ImageFiles != null)
+            {
+                if (CheckImage(product.ImageFiles) != "")
+                {
+                    ModelState.AddModelError("ImageFiles", CheckImage(existProduct.ImageFiles));
+                    return View();
+                }
+                foreach (var item in product.ImageFiles)
+                {
+                    ProductImage productImage = new ProductImage
+                    {
+                        Image = item.SaveImage(_env.WebRootPath, "assets/images/product"),
+                        IsMain =false,
+                        Product = existProduct
+                    };
+                    product.Images.Add(productImage);
+                    ProductImage mainImage = new ProductImage
+                    {
+                        Image = item.SaveImage(_env.WebRootPath, "assets/images/product"),
+                        IsMain = true,
+                        Product = existProduct
+                    };
+                    product.Images.Add(mainImage);
+                }
+            }
+            if (product.IsDelete == false) existProduct.IsDelete = true;
             existProduct.Name = product.Name;
             existProduct.Description = product.Description;
             existProduct.Price = product.Price;
             existProduct.Rating = product.Rating;
-            existProduct.IsDelete = product.IsDelete;
             existProduct.StockCount = product.StockCount;
             existProduct.CategoryId = product.CategoryId;
-            _sql.SaveChanges();
+            await _sql.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-       
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int? id,Product product)
         {
             if (id == null) return NotFound();
-            Product product = _sql.Products.Find(id);
+            product = _sql.Products.Find(id);
             if (product == null) return BadRequest();
             foreach (var item in product.Images)
             {
@@ -108,6 +156,21 @@ namespace ProniaSyte.Areas.Manage.Controllers
             _sql.Products.Remove(product);
             _sql.SaveChanges();
             return RedirectToAction("Index");
+        }
+        public string CheckImage(IFormFileCollection images)
+        {
+            foreach (var item in images)
+            {
+                if (!item.IsImage())
+                {
+                    return $"{item.FileName} adli file duzgun formatda deyil!";
+                }
+                if (!item.IsSizeOk(5))
+                {
+                    return $"{item.FileName} adli file max 5 mb ola biler!";
+                }
+            }
+            return "";
         }
     }
 }

@@ -22,8 +22,10 @@ namespace ProniaSyte.Models
         public int CategoryId { get; set; }
         public List<ProductImage> Images { get; set; }
         [NotMapped]
-        public IFormFile ImageFile { get; set; }
+        public List<int> ImageIds { get; set; }
         [NotMapped]
-        public List<IFormFile> ImageFiles { get; set; }
+        public IFormFileCollection ImageFiles { get; set; }
+        [NotMapped]
+        public IFormFile MainImage { get; set; }
     }
 }

@@ -1,15 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProniaSyte.DAL;
+using ProniaSyte.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProniaSyte
 {
@@ -25,10 +23,30 @@ namespace ProniaSyte
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(Configuration["ConnectionStrings:default"]);
+            });
+            
+            services.AddIdentity<AppUser,IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireDigit = true;
+
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                opt.Lockout.AllowedForNewUsers = true;
+
+                opt.User.RequireUniqueEmail = true;
             });
         }
 
@@ -49,7 +67,7 @@ namespace ProniaSyte
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
