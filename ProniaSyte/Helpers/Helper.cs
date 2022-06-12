@@ -17,4 +17,10 @@ namespace ProniaSyte.Helpers
             }
         }
     }
+    public enum UserRoles
+    {
+        Admin,
+        Member,
+        Moderator
+    }
 }

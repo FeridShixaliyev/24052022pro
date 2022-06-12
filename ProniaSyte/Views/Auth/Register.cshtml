@@ -42,6 +42,9 @@
                                 <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                             </div>
                             <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                            <div class="forgotton-password_info"style="display: flex;justify-content: end;">
+                                <a asp-controller="Auth" asp-action="Login"> Have you Account?</a>
+                            </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-custom-size lg-size btn-pronia-primary">Register</button>
                             </div>

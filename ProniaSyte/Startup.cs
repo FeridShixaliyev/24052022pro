@@ -48,6 +48,10 @@ namespace ProniaSyte
 
                 opt.User.RequireUniqueEmail = true;
             });
+            services.ConfigureApplicationCookie(opt=> 
+            {
+                opt.LoginPath = "/Auth/Login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

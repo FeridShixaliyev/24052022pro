@@ -57,7 +57,7 @@
         </div>
         <div class="mb-3">
             <label>Other Images :   </label>
-            <div class="other">
+            <div class="other" style="display:flex">
                 @foreach (var item in Model.Images.Where(i => i.IsMain != true))
                 {
                     <div class="delete-image">

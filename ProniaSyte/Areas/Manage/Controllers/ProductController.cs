@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace ProniaSyte.Areas.Manage.Controllers
 {
     [Area("Manage")]
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly IWebHostEnvironment _env;
@@ -21,6 +23,7 @@ namespace ProniaSyte.Areas.Manage.Controllers
             _sql = sql;
             _env = env;
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             List<Product> products = await _sql.Products.Include(p => p.Category).Include(i => i.Images).ToListAsync();
